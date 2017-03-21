@@ -6,6 +6,8 @@ description 'Installs/Configures chef-teamcity-windows'
 long_description 'Installs/Configures chef-teamcity-windows'
 version '0.1.0'
 
+depends 'java'
+
 # The `issues_url` points to the location where issues for this cookbook are
 # tracked.  A `View Issues` link will be displayed on this cookbook's page when
 # uploaded to a Supermarket.

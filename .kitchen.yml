@@ -21,6 +21,4 @@ suites:
     run_list:
       - recipe[chef-teamcity-windows::default]
     verifier:
-      inspec_tests:
-        - test/smoke/default
     attributes:
