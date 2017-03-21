@@ -11,6 +11,7 @@ log "<== Setting debug level to #{teamcity[:debug]} ==>"
 $debug = teamcity[:debug]
 
 # Install Java 8 JDK
+Chef::Log.level = :info
 log "<=== Running Java recipe to install JDK ====>" if $debug
 include_recipe 'java::default'
 

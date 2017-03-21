@@ -12,9 +12,10 @@ $debug = teamcity[:debug]
 
 TEAMCITY_VERSION = teamcity[:version]
 
-TEAMCITY_SERVER_PATH = teamcity['server']['basedir']
+TEAMCITY_SERVER_INSTALL_DIR = teamcity['server']['install_dir'].freeze
+TEAMCITY_SERVER_PATH = ::File.join(TEAMCITY_SERVER_INSTALL_DIR, 'teamcity').freeze
 TEAMCITY_SERVER_TAR = "TeamCity-#{TEAMCITY_VERSION}.tar".freeze
-TEAMCITY_SERVER_SOURCE_PATH = ::File.join(TEAMCITY_SERVER_PATH, TEAMCITY_SERVER_TAR).freeze
+TEAMCITY_SERVER_SOURCE_PATH = ::File.join(TEAMCITY_SERVER_INSTALL_DIR, TEAMCITY_SERVER_TAR).freeze
 TEAMCITY_SERVER_BIN_PATH = ::File.join(TEAMCITY_SERVER_PATH, 'bin').freeze
 
 
@@ -41,19 +42,19 @@ Chef::Log.level = :debug
 log "<=== Running 7-zip recipe ===>" if $debug
 include_recipe 'seven_zip::default'
 
-log "<== Downloading and extracting teamcity gz archive: path = #{TEAMCITY_SERVER_TMP} ==>" if $debug
+log "<== Downloading and extracting teamcity gz archive: path = #{TEAMCITY_SERVER_INSTALL_DIR} ==>" if $debug
 seven_zip_archive 'teamcity_tar_gz' do
-  path      TEAMCITY_SERVER_PATH # C:\teamcity
+  path      TEAMCITY_SERVER_INSTALL_DIR # C:\
   source    "http://download.jetbrains.com/teamcity/TeamCity-#{TEAMCITY_VERSION}.tar.gz"
   overwrite true
   timeout   120
 end
 
 if (! ::File.exist?(TEAMCITY_SERVER_BIN_PATH))
-    log "<== Downloading and extracting teamcity tar archive: path = #{TEAMCITY_SERVER_BASE_DIR}, source = #{TEAMCITY_SERVER_TMP}  ==>" if $debug
+    log "<== Downloading and extracting teamcity tar archive: path = #{TEAMCITY_SERVER_INSTALL_DIR}, source = #{TEAMCITY_SERVER_SOURCE_PATH}  ==>" if $debug
     seven_zip_archive 'teamcity_tar' do
-      path      TEAMCITY_SERVER_PATH # C:\teamcity
-      source    TEAMCITY_SERVER_SOURCE_PATH # Default is C:\teamcity\TeamCity-#{TEAMCITY_VERSION}.tar
+      path      TEAMCITY_SERVER_INSTALL_DIR # C:\
+      source    TEAMCITY_SERVER_SOURCE_PATH # Default is C:\TeamCity-#{TEAMCITY_VERSION}.tar
       timeout   30
     end
 end
