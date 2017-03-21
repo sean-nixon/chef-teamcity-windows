@@ -3,6 +3,8 @@
 
 node.default['teamcity_windows']['debug'] = true
 node.default['teamcity_windows']['url'] = 'https://download.jetbrains.com/teamcity/TeamCity-10.0.5.tar.gz'
+node.default['teamcity_windows']['version'] = '10.0.5'
+node.default['teamcity_windows']['server']['basedir'] = "C:/teamcity"
 
 node.default['java']['jdk_version'] = '8'
 node.default['java']['jdk_minor_version'] = '121'
