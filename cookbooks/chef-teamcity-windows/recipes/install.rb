@@ -14,15 +14,16 @@ Chef::Log.level = :debug
 # Install Java 8 JDK
 log "<=== Running Java recipe to install JDK ====>" if $debug
 include_recipe 'java::default'
-# log "<=== Running 7-zip recipe ===>" if $debug
-# include_recipe 'seven_zip::default'
 
-# seven_zip_archive 'seven_zip_source' do
-#   path      'C:\TeamCity'
-#   source    "#{teamcity[:url]}"
-#   overwrite true
-#   checksum  '3713aed72728eae8f6649e4803eba0b3676785200c76df6269034c520df4bbd5'
-#   timeout   30
-# end
+log "<=== Running 7-zip recipe ===>" if $debug
+include_recipe 'seven_zip::default'
+
+log "<== Downloading and extracting teamcity archive ==>" if $debug
+seven_zip_archive 'teamcity_source' do
+  path      'C:\TeamCity'
+  source    "#{teamcity[:url]}"
+  overwrite true
+  timeout   120
+end
 
 

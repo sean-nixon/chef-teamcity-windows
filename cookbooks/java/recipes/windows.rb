@@ -36,9 +36,7 @@ log "<== Setting URI of cache file path ==>"
 uri = ::URI.parse(node['java']['windows']['url'])
 cache_file_path = File.join(Chef::Config[:file_cache_path], File.basename(::URI.unescape(uri.path)))
 
-log "<== Testing if an S3 bucket is specified ==>"
 if s3_bucket && s3_remote_path
-  log "<== Attempting install using AWS S3 ==>"
   include_recipe 'aws::default' # install right_aws gem for aws_s3_file
 
   aws_s3_file cache_file_path do
@@ -54,7 +52,6 @@ if s3_bucket && s3_remote_path
 else
   ruby_block 'Enable Accessing cookies' do
     block do
-      log "<== Setting access cookies for Oracle download ==>"
       # Chef::REST became Chef::HTTP in chef 11
       cookie_jar = Chef::REST::CookieJar if defined?(Chef::REST::CookieJar)
       cookie_jar = Chef::HTTP::CookieJar if defined?(Chef::HTTP::CookieJar)
@@ -65,7 +62,7 @@ else
     only_if { node['java']['oracle']['accept_oracle_download_terms'] }
   end
 
-  log "<== Downloading installation file ==>"
+  Chef::Log.debug('<== Downloading installation file ==>')
   remote_file cache_file_path do
     checksum pkg_checksum if pkg_checksum
     source node['java']['windows']['url']
@@ -74,7 +71,7 @@ else
   end
 end
 
-log "<== Setting Java Home ==>"
+log "<== Setting Java Home to #{node[:java][:java_home]} ==>"
 if node['java'].attribute?('java_home')
   java_home_win = win_friendly_path(node['java']['java_home'])
   additional_options = if node['java']['jdk_version'] == '8'
@@ -91,25 +88,25 @@ if node['java'].attribute?('java_home')
   env 'JAVA_HOME' do
     value java_home_win
   end
-log "<== Updating windows path for JDK bin ==>"
+Chef::Log.debug('<== Updating windows path for JDK bin ==>')
   # update path
   windows_path "#{java_home_win}\\bin" do
     action :add
   end
 end
 
-log "<== Setting additional options for the java install ==>"
+Chef::Log.debug("<== Setting additional options for the java public JRE home to #{node[:java][:windows][:public]} ==>")
 if node['java']['windows'].attribute?('public_jre_home') && node['java']['windows']['public_jre_home']
   java_publicjre_home_win = win_friendly_path(node['java']['windows']['public_jre_home'])
   additional_options = "#{additional_options} /INSTALLDIRPUBJRE=\"#{java_publicjre_home_win}\""
 end
 
-log "<== Setting remove obsolete attribute for java install ==>"
+Chef::Log.debug("<== Setting remove obsolete attribute for java install to #{node[:java][:windows][:remove_obsolete]}==>")
 if node['java']['windows'].attribute?('remove_obsolete') && node['java']['windows']['remove_obsolete']
   additional_options = "#{additional_options} REMOVEOUTOFDATEJRES=1"
 end
 
-log "<== Installing Java on Windows machine ==>"
+Chef::Log.debug('<== Installing Java on Windows machine ==>')
 
 windows_package node['java']['windows']['package_name'] do
   source cache_file_path
