@@ -19,7 +19,6 @@
 #
 
 require 'uri'
-log "<== Including recipe java::notify ==>"
 include_recipe 'java::notify'
 
 Chef::Log.fatal('No download url set for java installer.') unless node['java'] && node['java']['windows'] && node['java']['windows']['url']
@@ -32,7 +31,6 @@ aws_session_token = node['java']['windows']['aws_session_token']
 s3_bucket = node['java']['windows']['bucket']
 s3_remote_path = node['java']['windows']['remote_path']
 
-log "<== Setting URI of cache file path ==>"
 uri = ::URI.parse(node['java']['windows']['url'])
 cache_file_path = File.join(Chef::Config[:file_cache_path], File.basename(::URI.unescape(uri.path)))
 
@@ -62,7 +60,6 @@ else
     only_if { node['java']['oracle']['accept_oracle_download_terms'] }
   end
 
-  Chef::Log.debug('<== Downloading installation file ==>')
   remote_file cache_file_path do
     checksum pkg_checksum if pkg_checksum
     source node['java']['windows']['url']
@@ -71,7 +68,6 @@ else
   end
 end
 
-log "<== Setting Java Home to #{node[:java][:java_home]} ==>"
 if node['java'].attribute?('java_home')
   java_home_win = win_friendly_path(node['java']['java_home'])
   additional_options = if node['java']['jdk_version'] == '8'
@@ -84,29 +80,24 @@ if node['java'].attribute?('java_home')
                          "/v\"/qn INSTALLDIR=\\\"#{java_home_win}\\\"\""
                        end
 
-  log "<== Java home is #{java_home_win} ==>"
   env 'JAVA_HOME' do
     value java_home_win
   end
-Chef::Log.debug('<== Updating windows path for JDK bin ==>')
+
   # update path
   windows_path "#{java_home_win}\\bin" do
     action :add
   end
 end
 
-Chef::Log.debug("<== Setting additional options for the java public JRE home to #{node[:java][:windows][:public]} ==>")
 if node['java']['windows'].attribute?('public_jre_home') && node['java']['windows']['public_jre_home']
   java_publicjre_home_win = win_friendly_path(node['java']['windows']['public_jre_home'])
   additional_options = "#{additional_options} /INSTALLDIRPUBJRE=\"#{java_publicjre_home_win}\""
 end
 
-Chef::Log.debug("<== Setting remove obsolete attribute for java install to #{node[:java][:windows][:remove_obsolete]}==>")
 if node['java']['windows'].attribute?('remove_obsolete') && node['java']['windows']['remove_obsolete']
   additional_options = "#{additional_options} REMOVEOUTOFDATEJRES=1"
 end
-
-Chef::Log.debug('<== Installing Java on Windows machine ==>')
 
 windows_package node['java']['windows']['package_name'] do
   source cache_file_path
