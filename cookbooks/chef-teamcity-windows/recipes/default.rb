@@ -12,8 +12,13 @@ $debug = teamcity[:debug]
 
 # Install Java 8 JDK
 Chef::Log.level = :info
-log "<=== Running Java recipe to install JDK ====>" if $debug
-include_recipe 'java::default'
+
+if (! ::File.exist?("#{node['java']['java_home']}"))
+    log "<=== Running Java recipe to install JDK ====>" if $debug
+    include_recipe 'java::default'
+else
+    log "<=== Java already installed ====>" if $debug
+end
 
 # Set logging level to debug
 Chef::Log.level = :debug if $debug

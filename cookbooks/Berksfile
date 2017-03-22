@@ -6,6 +6,7 @@ cookbook 'ohai', '= 4.2.1'
 cookbook 'windows', '= 1.44.3'
 cookbook 'apt', '= 5.1.0'
 cookbook 'seven_zip', '~> 2.0.2'
+cookbook 'windows_firewall', '~> 3.0.2'
 
 # All custom cookbooks in this repo
 cookbook 'chef-teamcity-windows', path: './chef-teamcity-windows'
