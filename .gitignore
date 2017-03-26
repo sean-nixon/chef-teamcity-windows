@@ -22,3 +22,6 @@ Policyfile.lock.json
 
 # zip files
 *.zip
+
+# VS Code
+.vscode/
