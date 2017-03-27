@@ -27,10 +27,6 @@ TEAMCITY_AGENT_SERVICE_NAME = 'TCBuildAgent'
 TEAMCITY_SERVER_PORT = teamcity['server']['port']
 TEAMCITY_AGENT_PORT = teamcity['server']['port']
 
-instance = search("aws_opsworks_instance", "self:true").first
-
-log "<=== Public DNS Address is  #{instance['public_dns']} ===>" if $debug
-PUBLIC_DNS = "#{instance['public_dns']}"
 
 # TEAMCITY_DB_USERNAME = teamcity['server']['database']['username'].freeze
 # TEAMCITY_DB_PASSWORD = teamcity['server']['database']['password'].freeze
